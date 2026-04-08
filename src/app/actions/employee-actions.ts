@@ -15,8 +15,8 @@ export async function createOccurrence(data: {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Não autorizado')
 
-    const { error } = await supabase
-      .from('occurrences')
+    const { error } = await (supabase
+      .from('occurrences') as any)
       .insert({
         employee_id: data.employeeId,
         type: data.type,
@@ -48,8 +48,8 @@ export async function createLeave(data: {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Não autorizado')
 
-    const { error } = await supabase
-      .from('leaves')
+    const { error } = await (supabase
+      .from('leaves') as any)
       .insert({
         employee_id: data.employeeId,
         leave_type: data.type,
