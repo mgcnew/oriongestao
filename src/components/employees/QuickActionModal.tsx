@@ -112,7 +112,7 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
               <>
                 <div className="grid gap-2">
                   <Label htmlFor="type">Tipo de Ocorrência</Label>
-                  <Select name="type" required defaultValue="atraso" onValueChange={setSelectedType}>
+                  <Select name="type" required defaultValue="atraso" onValueChange={(val) => setSelectedType(val || '')}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
@@ -154,7 +154,7 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
               <>
                 <div className="grid gap-2">
                   <Label htmlFor="type">Tipo de Ausência</Label>
-                  <Select name="type" defaultValue="ferias" onValueChange={setSelectedType}>
+                  <Select name="type" defaultValue="ferias" onValueChange={(val) => setSelectedType(val || '')}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -191,7 +191,7 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="reason">Motivo da Saída</Label>
-                  <Select name="reason" required defaultValue="resignation" onValueChange={setSelectedType}>
+                  <Select name="reason" required defaultValue="resignation" onValueChange={(val) => setSelectedType(val || '')}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

@@ -100,7 +100,7 @@ export function UploadDocumentModal({ employeeId, employees, onClose }: UploadDo
             <Label htmlFor="employee">Funcionário</Label>
             <Select 
               value={selectedEmployee} 
-              onValueChange={setSelectedEmployee}
+              onValueChange={(val) => setSelectedEmployee(val || '')}
               required
             >
               <SelectTrigger>
@@ -126,7 +126,7 @@ export function UploadDocumentModal({ employeeId, employees, onClose }: UploadDo
             name="category" 
             required 
             defaultValue={selectedCategory}
-            onValueChange={setSelectedCategory}
+            onValueChange={(val) => setSelectedCategory(val || '')}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione..." />

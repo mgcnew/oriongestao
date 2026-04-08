@@ -85,7 +85,7 @@ export function RegisterAttendanceModal({ employeeId, onClose }: RegisterAttenda
               name="status" 
               required 
               defaultValue={selectedStatus}
-              onValueChange={setSelectedStatus}
+              onValueChange={(val) => setSelectedStatus(val || '')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione..." />

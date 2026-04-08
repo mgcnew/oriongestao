@@ -100,7 +100,7 @@ export function UploadPaystubModal({ employeeId, employees, onClose }: UploadPay
             <Label htmlFor="employee">Funcionário</Label>
             <Select 
               value={selectedEmployee} 
-              onValueChange={setSelectedEmployee}
+              onValueChange={(val) => setSelectedEmployee(val || '')}
               required
             >
               <SelectTrigger>
@@ -127,7 +127,7 @@ export function UploadPaystubModal({ employeeId, employees, onClose }: UploadPay
               name="type" 
               required 
               defaultValue={selectedType}
-              onValueChange={setSelectedType}
+              onValueChange={(val) => setSelectedType(val || '')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione..." />
