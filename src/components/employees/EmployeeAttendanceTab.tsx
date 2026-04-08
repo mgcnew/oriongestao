@@ -1,9 +1,16 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
+import { useState } from 'react'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Clock, MapPin, CalendarX2, Briefcase, FileSpreadsheet } from 'lucide-react'
+import { Clock, CalendarX2, Briefcase, FileSpreadsheet, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useRouter } from 'next/navigation'
+import { RegisterAttendanceModal } from './modals/RegisterAttendanceModal'
 
 export interface AttendanceRecord {
   id: string
@@ -35,7 +42,9 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; ic
 }
 
 export function EmployeeAttendanceTab({ employeeId, attendanceRecords }: EmployeeAttendanceTabProps) {
-  
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const router = useRouter()
+
   const formatTime = (isoString: string | null) => {
     if (!isoString) return '--:--'
     return new Date(isoString).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
@@ -43,7 +52,6 @@ export function EmployeeAttendanceTab({ employeeId, attendanceRecords }: Employe
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '--/--/----'
-    // Ensuring timezone offsets don't change the day since it's a date string (YYYY-MM-DD)
     const [year, month, day] = dateString.split('-')
     return `${day}/${month}/${year}`
   }
@@ -55,10 +63,27 @@ export function EmployeeAttendanceTab({ employeeId, attendanceRecords }: Employe
           <Clock className="w-5 h-5 text-blue-500" />
           Controle de Ponto e Frequência
         </h3>
-        <Button variant="outline" size="sm" className="gap-2 text-muted-foreground">
-          <FileSpreadsheet className="w-4 h-4" />
-          Exportar Relatório
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2 text-muted-foreground">
+            <FileSpreadsheet className="w-4 h-4" />
+            Exportar
+          </Button>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4" />
+                Registrar Ponto
+              </Button>
+            </DialogTrigger>
+            <RegisterAttendanceModal 
+              employeeId={employeeId} 
+              onClose={() => {
+                setIsModalOpen(false)
+                router.refresh()
+              }} 
+            />
+          </Dialog>
+        </div>
       </div>
 
       {attendanceRecords.length === 0 ? (
@@ -70,6 +95,16 @@ export function EmployeeAttendanceTab({ employeeId, attendanceRecords }: Employe
           <p className="text-sm text-muted-foreground text-center mt-2 max-w-[280px]">
             Nenhum registro de entrada ou saída encontrado para este funcionário no período atual.
           </p>
+          <Button 
+            variant="outline" 
+            className="mt-6 border-blue-200 text-blue-700 hover:bg-blue-50 gap-2"
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Registrar Primeiro Ponto
+          </Button>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border/50">

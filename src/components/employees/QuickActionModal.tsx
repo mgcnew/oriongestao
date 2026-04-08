@@ -20,17 +20,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
-import { createOccurrence, createLeave } from '@/app/actions/employee-actions'
+import { createOccurrence, createLeave, terminateContract } from '@/app/actions/employee-actions'
 
 interface QuickActionModalProps {
   employeeId: string
   open: boolean
   onOpenChange: (open: boolean) => void
-  type: 'occurrence' | 'leave'
+  type: 'occurrence' | 'leave' | 'termination'
 }
 
 export function QuickActionModal({ employeeId, open, onOpenChange, type }: QuickActionModalProps) {
   const [loading, setLoading] = useState(false)
+  const [selectedType, setSelectedType] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -42,7 +43,7 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
       if (type === 'occurrence') {
         const result = await createOccurrence({
           employeeId,
-          type: formData.get('type') as string,
+          type: (formData.get('type') as string) || selectedType,
           date: formData.get('date') as string,
           description: formData.get('description') as string,
           severity: formData.get('severity') as any,
@@ -53,10 +54,10 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
         } else {
           toast.error(result.error || 'Erro ao registrar ocorrência')
         }
-      } else {
+      } else if (type === 'leave') {
         const result = await createLeave({
           employeeId,
-          type: formData.get('type') as string,
+          type: (formData.get('type') as string) || selectedType,
           startDate: formData.get('startDate') as string,
           endDate: formData.get('endDate') as string,
           reason: formData.get('reason') as string,
@@ -67,6 +68,20 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
         } else {
           toast.error(result.error || 'Erro ao lançar licença')
         }
+      } else if (type === 'termination') {
+        const result = await terminateContract({
+          employeeId,
+          terminationDate: formData.get('terminationDate') as string,
+          reason: (formData.get('reason') as string) || selectedType,
+          notes: formData.get('notes') as string,
+        })
+        if (result.success) {
+          toast.success('Contrato finalizado com sucesso!')
+          onOpenChange(false)
+          window.location.reload() // Reload to show new status
+        } else {
+          toast.error(result.error || 'Erro ao finalizar contrato')
+        }
       }
     } catch (error) {
       toast.error('Erro ao processar solicitação')
@@ -75,22 +90,29 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
     }
   }
 
+  const getTitle = () => {
+    switch(type) {
+      case 'occurrence': return 'Registrar Ocorrência'
+      case 'leave': return 'Lançar Férias'
+      case 'termination': return 'Finalizar Contrato'
+      default: return 'Ação'
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>
-              {type === 'occurrence' ? 'Registrar Ocorrência' : 'Lançar Férias'}
-            </DialogTitle>
+            <DialogTitle>{getTitle()}</DialogTitle>
           </DialogHeader>
           
           <div className="grid gap-4 py-4">
-            {type === 'occurrence' ? (
+            {type === 'occurrence' && (
               <>
                 <div className="grid gap-2">
                   <Label htmlFor="type">Tipo de Ocorrência</Label>
-                  <Select name="type" required>
+                  <Select name="type" required defaultValue="atraso" onValueChange={setSelectedType}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
@@ -126,11 +148,13 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
                   <Textarea id="description" name="description" placeholder="Detalhes da ocorrência..." required />
                 </div>
               </>
-            ) : (
+            )}
+
+            {type === 'leave' && (
               <>
                 <div className="grid gap-2">
                   <Label htmlFor="type">Tipo de Ausência</Label>
-                  <Select name="type" defaultValue="ferias">
+                  <Select name="type" defaultValue="ferias" onValueChange={setSelectedType}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -158,13 +182,41 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
                 </div>
               </>
             )}
+
+            {type === 'termination' && (
+              <>
+                <div className="grid gap-2">
+                  <Label htmlFor="terminationDate">Data de Desligamento</Label>
+                  <Input id="terminationDate" name="terminationDate" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="reason">Motivo da Saída</Label>
+                  <Select name="reason" required defaultValue="resignation" onValueChange={setSelectedType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="resignation">Pedido de Demissão</SelectItem>
+                      <SelectItem value="termination_with_cause">Demissão por Justa Causa</SelectItem>
+                      <SelectItem value="termination_without_cause">Demissão sem Justa Causa</SelectItem>
+                      <SelectItem value="end_of_contract">Término de Contrato</SelectItem>
+                      <SelectItem value="mutual_agreement">Acordo Mútuo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="notes">Observações</Label>
+                  <Textarea id="notes" name="notes" placeholder="Detalhes sobre o desligamento..." />
+                </div>
+              </>
+            )}
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className={type === 'termination' ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground' : ''}>
               {loading ? 'Salvando...' : 'Confirmar'}
             </Button>
           </DialogFooter>
@@ -173,3 +225,4 @@ export function QuickActionModal({ employeeId, open, onOpenChange, type }: Quick
     </Dialog>
   )
 }
+

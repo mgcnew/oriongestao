@@ -12,9 +12,9 @@ interface EmployeeQuickActionsProps {
 
 export function EmployeeQuickActions({ employeeId }: EmployeeQuickActionsProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const [modalType, setModalType] = useState<'occurrence' | 'leave'>('occurrence')
+  const [modalType, setModalType] = useState<'occurrence' | 'leave' | 'termination'>('occurrence')
 
-  const openModal = (type: 'occurrence' | 'leave') => {
+  const openModal = (type: 'occurrence' | 'leave' | 'termination') => {
     setModalType(type)
     setModalOpen(true)
   }
@@ -46,6 +46,7 @@ export function EmployeeQuickActions({ employeeId }: EmployeeQuickActionsProps) 
           <Button 
             variant="outline" 
             className="w-full justify-start gap-3 bg-background text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => openModal('termination')}
           >
             <Settings className="w-4 h-4" />
             Finalizar Contrato

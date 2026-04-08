@@ -48,7 +48,7 @@ export async function uploadEmployeeDocument(formData: FormData) {
     }
 
     // 5. Insert relative metadata into 'employee_documents' table
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
       .from('employee_documents')
       .insert({
         employee_id: employeeId,
@@ -91,7 +91,7 @@ export async function deleteEmployeeDocument(documentId: string, filePath: strin
     }
 
     // 2. Delete from database
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
       .from('employee_documents')
       .delete()
       .eq('id', documentId)

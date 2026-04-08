@@ -48,7 +48,7 @@ export async function uploadPaystub(formData: FormData) {
     }
 
     // 5. Insert relative metadata into 'employee_paystubs' table (Assumption: table exists or will be created)
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
       .from('employee_paystubs')
       .insert({
         employee_id: employeeId,
@@ -88,7 +88,7 @@ export async function deletePaystub(paystubId: string, filePath: string, employe
     }
 
     // 2. Delete from database
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
       .from('employee_paystubs')
       .delete()
       .eq('id', paystubId)

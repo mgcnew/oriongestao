@@ -59,7 +59,7 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
   }
 
   // Fetch documents
-  const { data: documentsData } = await supabase
+  const { data: documentsData } = await (supabase as any)
     .from('employee_documents')
     .select('*')
     .eq('employee_id', id)
@@ -68,8 +68,8 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
   const documents = documentsData || []
 
   // Fetch attendance records
-  const { data: attendanceData } = await (supabase
-    .from('attendance') as any)
+  const { data: attendanceData } = await (supabase as any)
+    .from('attendance')
     .select('*')
     .eq('employee_id', id)
     .order('work_date', { ascending: false })
@@ -78,8 +78,8 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
   const attendanceRecords = attendanceData || []
 
   // Fetch paystubs
-  const { data: paystubsData } = await (supabase
-    .from('employee_paystubs') as any)
+  const { data: paystubsData } = await (supabase as any)
+    .from('employee_paystubs')
     .select('*')
     .eq('employee_id', id)
     .order('month', { ascending: false })
