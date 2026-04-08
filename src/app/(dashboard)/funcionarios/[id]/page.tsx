@@ -1,4 +1,6 @@
 import { Header } from '@/components/layout/sidebar'
+import { EmployeeDocumentsTab } from '@/components/employees/EmployeeDocumentsTab'
+import { EmployeeAttendanceTab } from '@/components/employees/EmployeeAttendanceTab'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -54,6 +56,24 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
     notFound()
   }
 
+  // Fetch documents
+  const { data: documentsData } = await supabase
+    .from('employee_documents')
+    .select('*')
+    .eq('employee_id', id)
+    .order('uploaded_at', { ascending: false })
+
+  const documents = documentsData || []
+
+  // Fetch attendance records
+  const { data: attendanceData } = await supabase
+    .from('attendance')
+    .select('*')
+    .eq('employee_id', id)
+    .order('work_date', { ascending: false })
+    .limit(30)
+
+  const attendanceRecords = attendanceData || []
   const birthDateStr = employee.birth_date ? new Date(employee.birth_date).toLocaleDateString('pt-BR') : 'Não informado'
   const hireDateStr = employee.hire_date ? new Date(employee.hire_date).toLocaleDateString('pt-BR') : 'Não informado'
 
@@ -247,41 +267,11 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
               </TabsContent>
 
               <TabsContent value="documentos" className="mt-0">
-                <Card className="p-6 shadow-sm min-h-[400px]">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <FileCheck2 className="w-5 h-5 text-emerald-500" />
-                      Documentos Digitais
-                    </h3>
-                    <Button size="sm" className="gap-2">
-                      <UploadCloud className="w-4 h-4" />
-                      Novo Documento
-                    </Button>
-                  </div>
-                  
-                  {/* Mockup for Empty Documents */}
-                  <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-border rounded-xl bg-muted/10">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <FileText className="w-8 h-8 text-primary" />
-                    </div>
-                    <h4 className="text-base font-semibold text-foreground">Nenhum documento anexado</h4>
-                    <p className="text-sm text-muted-foreground text-center mt-2 max-w-[280px]">
-                      Faça o upload do RG, CPF, Contrato e outros documentos para digitalizar a pasta do funcionário.
-                    </p>
-                  </div>
-                </Card>
+                <EmployeeDocumentsTab employeeId={id} documents={documents} />
               </TabsContent>
 
               <TabsContent value="ponto" className="mt-0">
-                <Card className="p-6 shadow-sm min-h-[400px]">
-                  <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-blue-500" />
-                    Controle de Ponto Recente
-                  </h3>
-                  <div className="text-center py-12 text-muted-foreground text-sm">
-                    Integração com relógio de ponto será exibida aqui.
-                  </div>
-                </Card>
+                <EmployeeAttendanceTab employeeId={id} attendanceRecords={attendanceRecords} />
               </TabsContent>
 
               <TabsContent value="holerites" className="mt-0">
