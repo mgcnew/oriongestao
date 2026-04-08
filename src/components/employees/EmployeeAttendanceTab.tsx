@@ -13,7 +13,7 @@ export interface AttendanceRecord {
   check_out: string | null
   break_start: string | null
   break_end: string | null
-  status: string
+  status: string | null
   total_hours: number | null
   overtime_hours: number | null
   notes: string | null

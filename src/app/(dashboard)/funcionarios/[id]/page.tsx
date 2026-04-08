@@ -2,6 +2,7 @@ import { Header } from '@/components/layout/sidebar'
 import { EmployeeDocumentsTab } from '@/components/employees/EmployeeDocumentsTab'
 import { EmployeeAttendanceTab } from '@/components/employees/EmployeeAttendanceTab'
 import { EmployeePaystubsTab } from '@/components/employees/EmployeePaystubsTab'
+import { EmployeeQuickActions } from '@/components/employees/EmployeeQuickActions'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -67,8 +68,8 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
   const documents = documentsData || []
 
   // Fetch attendance records
-  const { data: attendanceData } = await supabase
-    .from('attendance')
+  const { data: attendanceData } = await (supabase
+    .from('attendance') as any)
     .select('*')
     .eq('employee_id', id)
     .order('work_date', { ascending: false })
@@ -77,8 +78,8 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
   const attendanceRecords = attendanceData || []
 
   // Fetch paystubs
-  const { data: paystubsData } = await supabase
-    .from('employee_paystubs')
+  const { data: paystubsData } = await (supabase
+    .from('employee_paystubs') as any)
     .select('*')
     .eq('employee_id', id)
     .order('month', { ascending: false })
@@ -190,26 +191,7 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
               </div>
             </Card>
 
-            <Card className="p-6 border-border shadow-sm bg-primary/5 border-primary/20">
-              <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Settings className="w-4 h-4 text-primary" />
-                Ações Rápidas
-              </h3>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start gap-3 bg-background">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
-                  Registrar Ocorrência
-                </Button>
-                <Button variant="outline" className="w-full justify-start gap-3 bg-background">
-                  <History className="w-4 h-4 text-blue-500" />
-                  Lançar Férias
-                </Button>
-                <Button variant="outline" className="w-full justify-start gap-3 bg-background text-red-600 hover:text-red-700 hover:bg-red-50">
-                  <Settings className="w-4 h-4" />
-                  Finalizar Contrato
-                </Button>
-              </div>
-            </Card>
+            <EmployeeQuickActions employeeId={id} />
           </div>
 
           {/* Right Column - Details and Tabs */}
@@ -285,7 +267,7 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
               </TabsContent>
 
               <TabsContent value="holerites" className="mt-0">
-                <EmployeePaystubsTab employeeId={id} paystubs={paystubs} />
+                <EmployeePaystubsTab employeeId={id} paystubs={paystubs as any} />
               </TabsContent>
 
             </Tabs>

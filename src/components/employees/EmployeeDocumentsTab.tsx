@@ -28,7 +28,7 @@ interface DocumentRecord {
   file_size: number | null
   uploaded_at: string | null
   file_name: string | null
-  description?: string
+  description?: string | null
 }
 
 interface EmployeeDocumentsTabProps {
