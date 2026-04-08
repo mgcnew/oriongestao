@@ -1,6 +1,7 @@
 import { Header } from '@/components/layout/sidebar'
 import { EmployeeDocumentsTab } from '@/components/employees/EmployeeDocumentsTab'
 import { EmployeeAttendanceTab } from '@/components/employees/EmployeeAttendanceTab'
+import { EmployeePaystubsTab } from '@/components/employees/EmployeePaystubsTab'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -74,6 +75,15 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
     .limit(30)
 
   const attendanceRecords = attendanceData || []
+
+  // Fetch paystubs
+  const { data: paystubsData } = await supabase
+    .from('employee_paystubs')
+    .select('*')
+    .eq('employee_id', id)
+    .order('month', { ascending: false })
+
+  const paystubs = paystubsData || []
   const birthDateStr = employee.birth_date ? new Date(employee.birth_date).toLocaleDateString('pt-BR') : 'Não informado'
   const hireDateStr = employee.hire_date ? new Date(employee.hire_date).toLocaleDateString('pt-BR') : 'Não informado'
 
@@ -275,21 +285,7 @@ export default async function FuncionarioPerfilPage({ params }: PageProps) {
               </TabsContent>
 
               <TabsContent value="holerites" className="mt-0">
-                <Card className="p-6 shadow-sm min-h-[400px]">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <Wallet className="w-5 h-5 text-emerald-600" />
-                      Holerites Recentes
-                    </h3>
-                    <Button size="sm" variant="outline" className="gap-2">
-                      <UploadCloud className="w-4 h-4" />
-                      Importar Holerites
-                    </Button>
-                  </div>
-                   <div className="text-center py-12 text-muted-foreground text-sm">
-                    Nenhum holerite lançado para competências recentes.
-                  </div>
-                </Card>
+                <EmployeePaystubsTab employeeId={id} paystubs={paystubs} />
               </TabsContent>
 
             </Tabs>
