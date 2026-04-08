@@ -109,7 +109,7 @@ export function Sidebar() {
         ))}
 
         {/* Logout */}
-        <Tooltip>
+        <Tooltip key={collapsed ? 'c' : 'e'}>
           <TooltipTrigger
             render={
               <button
@@ -166,7 +166,7 @@ function NavItem({
   const Icon = item.icon
 
   return (
-    <Tooltip>
+    <Tooltip key={collapsed ? 'c' : 'e'}>
       <TooltipTrigger
         render={
           <Link
