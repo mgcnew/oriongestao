@@ -18,11 +18,9 @@ export function HoleritesClient({ employees }: HoleritesClientProps) {
     <>
       <div className="flex justify-end mb-6">
         <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700">
-              <Upload className="w-4 h-4" />
-              Importar Holerite
-            </Button>
+          <DialogTrigger render={<Button className="gap-2 bg-emerald-600 hover:bg-emerald-700" />}>
+            <Upload className="w-4 h-4" />
+            Importar Holerite
           </DialogTrigger>
           <UploadPaystubModal 
             employees={employees} 

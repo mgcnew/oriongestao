@@ -27,11 +27,9 @@ export function DocumentosClient({ employees }: DocumentosClientProps) {
         </div>
         
         <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto gap-2 bg-violet-600 hover:bg-violet-700">
-              <Upload className="w-4 h-4" />
-              Enviar Documento
-            </Button>
+          <DialogTrigger render={<Button className="w-full sm:w-auto gap-2 bg-violet-600 hover:bg-violet-700" />}>
+            <Upload className="w-4 h-4" />
+            Enviar Documento
           </DialogTrigger>
           <UploadDocumentModal 
             employees={employees} 

@@ -90,11 +90,9 @@ export function EmployeeDocumentsTab({ employeeId, documents }: EmployeeDocument
           Documentação Digital
         </h3>
         <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700">
-              <Plus className="w-4 h-4" />
-              Novo Documento
-            </Button>
+          <DialogTrigger render={<Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700" />}>
+            <Plus className="w-4 h-4" />
+            Novo Documento
           </DialogTrigger>
           <UploadDocumentModal 
             employeeId={employeeId} 

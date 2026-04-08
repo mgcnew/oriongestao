@@ -69,11 +69,9 @@ export function EmployeeAttendanceTab({ employeeId, attendanceRecords }: Employe
             Exportar
           </Button>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4" />
-                Registrar Ponto
-              </Button>
+            <DialogTrigger render={<Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700" />}>
+              <Plus className="w-4 h-4" />
+              Registrar Ponto
             </DialogTrigger>
             <RegisterAttendanceModal 
               employeeId={employeeId} 
